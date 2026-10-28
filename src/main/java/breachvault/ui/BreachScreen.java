@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
  */
 public class BreachScreen extends VBox {
 
-    private static final double BREACH_SECONDS = 40;
+    private static final double BREACH_SECONDS = 30;
     private static final double CRITICAL_SECONDS = 5;
 
     private final BreachGame game;
