@@ -1,0 +1,19 @@
+# Gradle
+.gradle/
+build/
+
+# IDE и локальные настройки Claude Code
+.idea/
+*.iml
+.claude/
+
+# Референс-скриншот из Cyberpunk 2077 — чужая картинка, не публикуем
+referencepng.jpg
+
+# Отладочный файл с секретами — НИКОГДА не коммитить
+debug-secrets.txt
+
+# Результаты работы сейфа
+*.vault
+*-restored/
+*-restored-*/

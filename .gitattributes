@@ -1,0 +1,9 @@
+# Скрипты запуска Gradle: gradlew — для Linux/Mac (только LF), gradlew.bat — для Windows (CRLF)
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# Бинарные файлы не трогаем
+*.jar binary
+*.png binary
+*.ico binary
+*.ttf binary
