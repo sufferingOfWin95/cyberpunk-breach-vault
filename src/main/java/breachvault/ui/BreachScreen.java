@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
  */
 public class BreachScreen extends VBox {
 
-    private static final double BREACH_SECONDS = 30;
+    private static final double BREACH_SECONDS = 40;
     private static final double CRITICAL_SECONDS = 5;
 
     private final BreachGame game;
@@ -67,14 +67,12 @@ public class BreachScreen extends VBox {
         bottomRow.getStyleClass().addAll("row", "bottom-row");
 
         getChildren().addAll(titleRow, bandRow, panelsRow, bottomRow);
+        timerView.start(); // время идёт сразу, как только матрица на экране — думать тоже надо быстро
     }
 
     /** Вызывается после каждого удачного хода. */
     private void onMove() {
         bufferView.update(game.getBuffer());
-        if (!timerView.isStarted()) {
-            timerView.start(); // время идёт с первого клика
-        }
         if (game.isBufferFull() || !game.hasMoves()) {
             List<String> buffer = List.copyOf(game.getBuffer());
             finish(() -> onComplete.accept(buffer));

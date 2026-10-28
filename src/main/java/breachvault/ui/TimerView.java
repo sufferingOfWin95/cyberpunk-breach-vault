@@ -26,7 +26,6 @@ public class TimerView extends VBox {
     private final DoubleProperty fraction = new SimpleDoubleProperty(1); // доля оставшегося времени, 1 → 0
     private final AnimationTimer ticker;
     private long startNanos;
-    private boolean started;
 
     public TimerView(double totalSeconds, double criticalSeconds, Runnable onTimeout) {
         this.totalSeconds = totalSeconds;
@@ -75,17 +74,12 @@ public class TimerView extends VBox {
 
     public void start() {
         startNanos = System.nanoTime();
-        started = true;
         ticker.start();
     }
 
     public void stop() {
         ticker.stop();
         value.setOpacity(1);
-    }
-
-    public boolean isStarted() {
-        return started;
     }
 
     private void show(double seconds) {

@@ -10,11 +10,30 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 /**
- * Полноэкранная надпись ACCESS GRANTED / ACCESS DENIED со сбоем.
+ * Полноэкранная надпись результата со сбоем: ACCESS GRANTED, ACCESS DENIED или TIME OUT.
  * Появляется поверх экрана, держится пару секунд, исчезает и вызывает after.
  * Пока она на экране, клики под неё не проходят.
  */
 final class ResultOverlay extends StackPane {
+
+    /** Вид результата: надпись, подпись сверху, CSS-класс цвета и звук. */
+    enum Kind {
+        GRANTED("ACCESS GRANTED", "BREACH SUCCESSFUL // DAEMON UPLOADED", "granted", Sounds.Cue.GRANTED),
+        DENIED("ACCESS DENIED", "ICE COUNTERMEASURE // CONNECTION TERMINATED", "denied", Sounds.Cue.DENIED),
+        TIMEOUT("TIME OUT", "BREACH WINDOW CLOSED // TRACE COMPLETE", "denied", Sounds.Cue.TIMEOUT);
+
+        private final String title;
+        private final String caption;
+        private final String styleClass;
+        private final Sounds.Cue sound;
+
+        Kind(String title, String caption, String styleClass, Sounds.Cue sound) {
+            this.title = title;
+            this.caption = caption;
+            this.styleClass = styleClass;
+            this.sound = sound;
+        }
+    }
 
     private static final Duration FADE = Duration.millis(180);
     private static final Duration GLITCH = Duration.millis(750);
@@ -22,30 +41,27 @@ final class ResultOverlay extends StackPane {
 
     private final GlitchText title;
 
-    private ResultOverlay(boolean granted, String detail) {
-        getStyleClass().addAll("result-overlay", granted ? "granted" : "denied");
+    private ResultOverlay(Kind kind, String detail) {
+        getStyleClass().addAll("result-overlay", kind.styleClass);
         setPickOnBounds(true); // ловим клики по всей площади, даже по прозрачным местам
 
-        title = new GlitchText(granted ? "ACCESS GRANTED" : "ACCESS DENIED");
+        title = new GlitchText(kind.title);
         Label detailLabel = new Label(detail);
         detailLabel.getStyleClass().add("result-detail");
         detailLabel.setWrapText(true);
         detailLabel.setMaxWidth(1100); // длинный путь переносится, а не тянется от края до края
 
-        VBox band = new VBox(
-                Hud.tech(granted ? "BREACH SUCCESSFUL // DAEMON UPLOADED" : "ICE COUNTERMEASURE // CONNECTION TERMINATED"),
-                title,
-                detailLabel);
+        VBox band = new VBox(Hud.tech(kind.caption), title, detailLabel);
         band.getStyleClass().add("result-band");
         band.setMaxHeight(USE_PREF_SIZE); // полоса по центру, а не на всю высоту
         getChildren().add(band);
     }
 
     /** Показать поверх host. После исчезновения надпись убирается и вызывается after. */
-    static void show(StackPane host, boolean granted, String detail, Runnable after) {
-        ResultOverlay overlay = new ResultOverlay(granted, detail);
+    static void show(StackPane host, Kind kind, String detail, Runnable after) {
+        ResultOverlay overlay = new ResultOverlay(kind, detail);
         host.getChildren().add(overlay);
-        Sounds.play(granted ? Sounds.Cue.GRANTED : Sounds.Cue.DENIED);
+        Sounds.play(kind.sound);
 
         FadeTransition fadeIn = new FadeTransition(FADE, overlay);
         fadeIn.setFromValue(0);

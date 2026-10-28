@@ -24,7 +24,7 @@ import javafx.stage.FileChooser;
  *
  * Новый сейф (v2, сетка внутри файла): выбрал файл → сразу сетка с таймером.
  *   Собранный буфер и есть ключ: подошёл — ACCESS GRANTED, нет — DENIED и перемешанная сетка.
- *   Время вышло — тоже DENIED и перемешанная сетка.
+ *   Время вышло — TIME OUT и перемешанная сетка.
  *
  * Старый сейф (v1, без сетки): сначала ввод секрета на панели, по нему строится сетка.
  *
@@ -130,14 +130,14 @@ public class OpenVaultView extends StackPane {
         boolean mismatch = buffer.size() < expected // тупик: буфер не добран
                 || (candidate != null && !buffer.equals(candidate)); // v1: промах мимо набранного
         if (mismatch) {
-            ResultOverlay.show(this, false, "SEQUENCE INCOMPLETE // MATRIX RESHUFFLED", this::newGrid);
+            ResultOverlay.show(this, ResultOverlay.Kind.DENIED, "SEQUENCE INCOMPLETE // MATRIX RESHUFFLED", this::newGrid);
             return;
         }
         decrypt(buffer);
     }
 
     private void onTimeout() {
-        ResultOverlay.show(this, false, "BREACH TIME EXPIRED // MATRIX RESHUFFLED", this::newGrid);
+        ResultOverlay.show(this, ResultOverlay.Kind.TIMEOUT, "BREACH TIME EXPIRED // MATRIX RESHUFFLED", this::newGrid);
     }
 
     private void onAbort() {
@@ -163,7 +163,7 @@ public class OpenVaultView extends StackPane {
         };
         task.setOnSucceeded(e -> {
             Restored restored = task.getValue();
-            ResultOverlay.show(this, true, "RESTORED TO " + restored.folder(), () -> {
+            ResultOverlay.show(this, ResultOverlay.Kind.GRANTED, "RESTORED TO " + restored.folder(), () -> {
                 vault = null;
                 header = null;
                 candidate = null;
@@ -176,10 +176,10 @@ public class OpenVaultView extends StackPane {
             Throwable error = task.getException();
             if (error instanceof WrongSecretException && header.hasGrid()) {
                 // Собрал не ту последовательность — та же сетка, но перемешанная
-                ResultOverlay.show(this, false, "WRONG SEQUENCE // MATRIX RESHUFFLED", this::newGrid);
+                ResultOverlay.show(this, ResultOverlay.Kind.DENIED, "WRONG SEQUENCE // MATRIX RESHUFFLED", this::newGrid);
             } else if (error instanceof WrongSecretException) {
                 // v1: сетку прошёл, но сам набранный секрет неверный — новая сетка не поможет
-                ResultOverlay.show(this, false, "WRONG SECRET // RE-ENTER SEQUENCE", () -> {
+                ResultOverlay.show(this, ResultOverlay.Kind.DENIED, "WRONG SECRET // RE-ENTER SEQUENCE", () -> {
                     candidate = null;
                     Hud.status(message, "ACCESS DENIED — WRONG SECRET", "error");
                     showForm(Step.LEGACY_ENTER);

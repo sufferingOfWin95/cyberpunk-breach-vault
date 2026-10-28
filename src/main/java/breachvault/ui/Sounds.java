@@ -16,7 +16,7 @@ import javax.sound.sampled.LineUnavailableException;
  */
 final class Sounds {
 
-    enum Cue { HOVER, CLICK, PICK, OPEN, GRANTED, DENIED }
+    enum Cue { HOVER, CLICK, PICK, OPEN, GRANTED, DENIED, TIMEOUT }
 
     private static final AudioFormat FORMAT = new AudioFormat(Synth.RATE, 16, 1, true, false);
 
@@ -113,6 +113,16 @@ final class Sounds {
                 Synth.tone(s, 0, 110, 1200, 300, Wave.SQUARE, 0.25); // короткий «зап» сверху
                 Synth.stutter(s, 230, 22);
                 return Synth.toPcm16(s, 0.28);
+            }
+            case TIMEOUT -> {
+                // Тревога: три коротких гудка, каждый ниже предыдущего, и низкий хвост
+                s = Synth.buffer(700);
+                Synth.tone(s, 0, 110, 880, 880, Wave.SQUARE, 0.5);
+                Synth.tone(s, 150, 110, 660, 660, Wave.SQUARE, 0.5);
+                Synth.tone(s, 300, 260, 440, 330, Wave.SQUARE, 0.5);
+                Synth.tone(s, 300, 380, 110, 80, Wave.SAW, 0.4);
+                Synth.echo(s, 75, 0.25);
+                return Synth.toPcm16(s, 0.26);
             }
             default -> throw new IllegalArgumentException(cue.toString());
         }
