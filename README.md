@@ -13,6 +13,7 @@
 ![Gradle](https://img.shields.io/badge/Gradle-8.14-D0ED57?style=flat-square&labelColor=0D0F14)
 ![AES-256-GCM](https://img.shields.io/badge/AES--256-GCM-5EF6FF?style=flat-square&labelColor=0D0F14)
 ![Tests](https://img.shields.io/badge/tests-48%20passed-5EF6FF?style=flat-square&labelColor=0D0F14)
+![License: MIT](https://img.shields.io/badge/license-MIT-5EF6FF?style=flat-square&labelColor=0D0F14)
 
 <img src="docs/screenshots/breach.png" alt="Экран взлома">
 
@@ -170,3 +171,8 @@ test-data/                        безопасные файлы для экс�
   не связанный с CD PROJEKT RED. Графика, иконки и звуки нарисованы и синтезированы с нуля.
 - Шрифт [Rajdhani](https://fonts.google.com/specimen/Rajdhani) — Indian Type Foundry,
   лицензия SIL Open Font License (`src/main/resources/breachvault/fonts/OFL.txt`).
+
+## Лицензия
+
+Код — [MIT](LICENSE): бери, меняй, используй как хочешь, только сохрани строку с копирайтом.
+Шрифт Rajdhani остаётся под своей лицензией OFL.
